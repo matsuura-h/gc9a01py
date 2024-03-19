@@ -923,3 +923,261 @@ class GC9A01():
                 pass
 
         return width
+    
+    def circle(self, x, y, r, color):
+        if r <= 0:
+            self.pixel(x, y, color)
+            return
+        f = 1 - r
+        ddF_y = - (r << 1)
+        ddF_x = 1
+        i = 0
+        j = -1
+        while True:
+            while True:
+                i += 1
+                ddF_x += 2
+                f += ddF_x
+                if not f < 0:
+                    break
+            ddF_y += 2
+            f += ddF_y
+            self.hline(x - i, y + r, i - j, color)
+            self.hline(x - i, y - r, i - j, color)
+            self.hline(x + j + 1, y - r, i - j, color)
+            self.hline(x + j + 1, y + r, i - j, color)
+            self.vline(x + r, y + j + 1, i - j, color)
+            self.vline(x + r, y - i, i - j, color)
+            self.vline(x - r, y - i, i - j, color)
+            self.vline(x - r, y + j + 1, i - j, color)
+            j = i
+            r -= 1
+            if not i < r:
+                break
+
+    def ellipse(self, x, y, rx, ry, color):
+        if ry == 0:
+            self.hline(x - rx, y, (rx << 2) + 1, color)
+            return
+        if rx == 0:
+            self.vline(x, y - ry, (ry << 2) + 1, color)
+            return
+        if rx < 0 or ry < 0:
+            return
+        rx2 = rx * rx
+        ry2 = ry * ry
+        i =  -1
+        xt = 0
+        yt = ry
+        s = (ry2 << 1) + rx2 * (1 - (ry << 1))
+        while True:
+            while s < 0:
+                xt += 1
+                s += ry2 * ((xt << 2) + 2)
+            self.hline(x - xt, y - yt, xt - i, color)
+            self.hline(x + i + 1, y - yt, xt - i, color)
+            self.hline(x + i + 1, y + yt, xt - i, color)
+            self.hline(x - xt, y + yt, xt - i, color)
+            i = xt
+            yt -= 1
+            s -= yt * rx2 << 2
+            if not ry2 * xt <= rx2 * yt:
+                break
+        i = -1
+        yt = 0
+        xt = rx
+        s = (rx2 << 1) + ry2 * (1 - (rx << 1))
+        while True:
+            while s < 0:
+                yt += 1
+                s += rx2 * ((yt << 2) + 2)
+            self.vline(x - xt, y - yt, yt - i, color)
+            self.vline(x - xt, y + i + 1, yt - i, color)
+            self.vline(x + xt, y + i + 1, yt - i, color)
+            self.vline(x + xt, y - yt, yt - i, color)
+            i = yt
+            xt -= 1
+            s -= xt * ry2 << 2
+            if not rx2 * yt <= ry2 * xt:
+                break
+
+# 
+# Copyright (c) 2024 Hiroya Matsuura
+# Additional codes for https://penfold.owt.com/gc9a01py/ based on https://github.com/lovyan03/LovyanGFX/
+# 
+# functions: circle, ellipse, fill_circle, fill_ellipse, triangle, fill_triangle are written by Hiroya Matsuura,
+# based on LovyanGFX's LGFXBase.cpp functions.
+# 
+# gc9a01 Licence:
+#  [MIT](https://github.com/russhughes/gc9a01py/blob/main/LICENSE)
+# 
+# LovyanGFX Licence:
+#  [FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt)
+# 
+
+    def fill_circle(self, x, y, r, color):
+        self.hline(x - r, y, (r << 1) + 1, color)
+        self.fill_circle_helper(x, y, r, 3, 0, color)
+
+    def fill_circle_helper(self, x, y, r, corners, delta, color):
+        if r <= 0:
+            return
+        delta += 1
+        f = 1 - r
+        ddF_y = - (r << 1)
+        ddF_x = 1
+        i = 0
+        while True:
+            len = 0
+            while f < 0:
+                ddF_x += 2
+                f += ddF_x
+                len += 1
+            i += len
+            ddF_y += 2
+            f += ddF_y
+            if not corners & 0x01 == 0:
+                if not len == 0:
+                    self.fill_rect(x - r, y + i - len + 1, (r << 1) + delta, len, color)
+                self.hline(x - i, y + r, (i << 1) + delta, color)
+            if not (corners & 0x2) == 0:
+                self.hline(x - i, y - r, (i << 1) + delta, color)
+                if not len == 0:
+                    self.fill_rect(x - r, y - i, (r << 1) + delta, len, color)
+            r -= 1
+            if i >= r:
+                break
+
+    def fill_ellipse(self, x, y, rx, ry, color):
+        if ry == 0:
+            self.hline(x - rx, y, (rx << 2) + 1, color)
+            return
+        if rx == 0:
+            self.vline(x, y - ry, (ry << 2) + 1, color)
+            return
+        if rx < 0 or ry < 0:
+            return
+        
+        self.hline(x - rx, y, (rx << 1) + 1, color)
+        rx2 = rx * rx
+        ry2 = ry * ry
+        i = 0
+        yt = 0
+        xt = rx
+        s = (rx2 << 1) + ry2 * (1 - (rx << 1))
+        
+        while True:
+            while s < 0:
+                yt += 1
+                s += rx2 * ((yt << 2) + 2)
+            self.fill_rect(x - xt, y - yt, (xt << 1) + 1, yt - i, color)
+            self.fill_rect(x - xt, y + i + 1, (xt << 1) + 1, yt - i, color)
+            i = yt
+            xt -= 1
+            s -= xt * ry2 << 2
+            if not rx2 * yt <= ry2 * xt:
+                break
+        xt, yt = 0, ry
+        s = (ry2 << 1) + rx2 * (1 - (ry << 1))
+        while True:
+            while s < 0:
+                xt += 1
+                s += ry2 * ((xt << 2) + 2)
+            self.hline(x - xt, y - yt, (xt << 1) + 1, color)
+            self.hline(x - xt, y + yt, (xt << 1) + 1, color)
+            yt -= 1
+            s -= yt * rx2 << 2
+            if not ry2 * xt <= rx2 * yt:
+                break
+
+    def triangle(self, x0, y0, x1, y1, x2, y2, color):
+        self.line(x0, y0, x1, y1, color)
+        self.line(x1, y1, x2, y2, color)
+        self.line(x2, y2, x0, y0, color)
+
+    def fill_triangle(self, x0, y0, x1, y1, x2, y2, color):
+        a, b = 0, 0
+        # Sort coordinates by Y order (y2 >= y1 >= y0)
+        if y0 > y1:
+            y0, y1 = y1, y0
+            x0, x1 = x1, x0
+        if y1 > y2:
+            y2, y1 = y1, y2
+            x2, x1 = x1, x2
+        if y0 > y1:
+            y0, y1 = y1, y0
+            x0, x1 = x1, x0
+        if y0 == y2:  # Handle awkward all-on-same-line case as its own thing
+            a = b = x0
+            if x1 < a:
+                a = x1
+            elif x1 > b:
+                b = x1
+            if x2 < a:
+                a = x2
+            elif x2 > b:
+                b = x2
+            self.hline(a, y0, b - a + 1, color)
+            return
+        if (x1 - x0) * (y2 - y0) == (x2 - x0) * (y1 - y0):
+            self.line(x0, y0, x2, y2, color)
+            return
+        dy1 = y1 - y0
+        dy2 = y2 - y0
+        change = (x1 - x0) * dy2 > (x2 - x0) * dy1
+        dx1 = abs(x1 - x0)
+        dx2 = abs(x2 - x0)
+        xstep1 = -1 if x1 < x0 else 1
+        xstep2 = -1 if x2 < x0 else 1
+        a = b = x0
+        if change:
+            dx1, dx2 = dx2, dx1
+            dy1, dy2 = dy2, dy1
+            xstep1, xstep2 = xstep2, xstep1
+        err1 = (max(dx1, dy1) >> 1) + (min(dx1, dy1) if xstep1 < 0 else dx1)
+        err2 = (max(dx2, dy2) >> 1) + (min(dx2, dy2) if xstep2 > 0 else dx2)
+        
+        if y0 != y1:
+            while True:
+                err1 -= dx1
+                while err1 < 0:
+                    err1 += dy1
+                    a += xstep1
+                err2 -= dx2
+                while err2 < 0:
+                    err2 += dy2
+                    b += xstep2
+                self.hline(a, y0, b - a + 1, color)
+                y0 += 1
+                if not y0 < y1:
+                    break
+        if change:
+            b = x1
+            xstep2 = -1 if x2 < x1 else 1
+            dx2 = abs(x2 - x1)
+            dy2 = y2 - y1
+            err2 = (max(dx2, dy2) >> 1) + (min(dx2, dy2) if xstep2 > 0 else dx2)
+        else:
+            a = x1
+            dx1 = abs(x2 - x1)
+            dy1 = y2 - y1
+            xstep1 = -1 if x2 < x1 else 1
+            err1 = (max(dx1, dy1) >> 1) + (min(dx1, dy1) if xstep1 < 0 else dx1)
+        while True:
+            err1 -= dx1
+            while err1 < 0:
+                err1 += dy1
+                a += xstep1
+                if a == x2:
+                    break
+            err2 -= dx2
+            while err2 < 0:
+                err2 += dy2
+                b += xstep2
+                if b == x2:
+                    break
+            self.hline(a, y0, b - a + 1, color)
+            y0 += 1
+            if not y0 <= y2:
+                break
+
