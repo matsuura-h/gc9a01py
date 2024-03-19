@@ -1,19 +1,13 @@
 gc9a01py.py
 ===========
 
-This is a fork of devbis' st7789py_mpy module from
-https://github.com/devbis/st7789py_mpy modified to drive 240x240 pixel GC9A01
-displays.
+this is fork from https://penfold.owt.com/gc9a01py/
 
-The driver supports display rotation, mirroring, scrolling drawing text using 8
-and 16 bit wide bitmap fonts with heights that are multiples of 8. Included are
-12 bitmap fonts derived from classic pc text mode fonts and several example
-programs.
+added standard shape functions: circle, ellipse, fill_circle, fill_ellipse, triangle, fill_triangle based on LovyanGFX's LGFXBase.cpp functions.
 
-Utilities to convert bitmaps fonts and images to bitmap modules are included in
-the utils directory. Documentation can be found in the docs directory and at https://penfold.owt.com/gc9a01py/
-
-If you are looking for a faster driver with additional features, check out the
-C version of the driver at https://github.com/russhughes/gc9a01_mpy
-
-This is a work in progress.
+I'd like to say thank you for these great works.
+gc9a01 Licence:
+[MIT](https://github.com/russhughes/gc9a01py/blob/main/LICENSE)
+ 
+LovyanGFX Licence:
+[FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt)
