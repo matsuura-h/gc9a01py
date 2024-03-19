@@ -924,6 +924,19 @@ class GC9A01():
 
         return width
     
+# 
+# Copyright (c) 2024 Hiroya Matsuura
+# Additional codes for https://penfold.owt.com/gc9a01py/ based on https://github.com/lovyan03/LovyanGFX/
+# 
+# functions: circle, ellipse, fill_circle, fill_ellipse, triangle, fill_triangle are written by Hiroya Matsuura,
+# based on LovyanGFX's LGFXBase.cpp functions.
+# 
+# gc9a01 Licence:
+#  [MIT](https://github.com/russhughes/gc9a01py/blob/main/LICENSE)
+# 
+# LovyanGFX Licence:
+#  [FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt)
+# 
     def circle(self, x, y, r, color):
         if r <= 0:
             self.pixel(x, y, color)
@@ -1000,20 +1013,6 @@ class GC9A01():
             s -= xt * ry2 << 2
             if not rx2 * yt <= ry2 * xt:
                 break
-
-# 
-# Copyright (c) 2024 Hiroya Matsuura
-# Additional codes for https://penfold.owt.com/gc9a01py/ based on https://github.com/lovyan03/LovyanGFX/
-# 
-# functions: circle, ellipse, fill_circle, fill_ellipse, triangle, fill_triangle are written by Hiroya Matsuura,
-# based on LovyanGFX's LGFXBase.cpp functions.
-# 
-# gc9a01 Licence:
-#  [MIT](https://github.com/russhughes/gc9a01py/blob/main/LICENSE)
-# 
-# LovyanGFX Licence:
-#  [FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt)
-# 
 
     def fill_circle(self, x, y, r, color):
         self.hline(x - r, y, (r << 1) + 1, color)
