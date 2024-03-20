@@ -970,10 +970,10 @@ class GC9A01():
 
     def ellipse(self, x, y, rx, ry, color):
         if ry == 0:
-            self.hline(x - rx, y, (rx << 2) + 1, color)
+            self.hline(x - rx, y, (rx << 1) + 1, color)
             return
         if rx == 0:
-            self.vline(x, y - ry, (ry << 2) + 1, color)
+            self.vline(x, y - ry, (ry << 1) + 1, color)
             return
         if rx < 0 or ry < 0:
             return
@@ -1049,10 +1049,10 @@ class GC9A01():
 
     def fill_ellipse(self, x, y, rx, ry, color):
         if ry == 0:
-            self.hline(x - rx, y, (rx << 2) + 1, color)
+            self.hline(x - rx, y, (rx << 1) + 1, color)
             return
         if rx == 0:
-            self.vline(x, y - ry, (ry << 2) + 1, color)
+            self.vline(x, y - ry, (ry << 1) + 1, color)
             return
         if rx < 0 or ry < 0:
             return
